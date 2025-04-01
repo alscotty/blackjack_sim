@@ -1,3 +1,9 @@
+body {
+  background-color: green;
+  color: white;
+  font-family: Arial, sans-serif;
+}
+
 .App {
   text-align: center;
 }
@@ -26,6 +32,37 @@
 
 .App-link {
   color: #61dafb;
+}
+
+.hand-container {
+  display: flex;
+  justify-content: space-between;
+  margin: 20px;
+}
+
+.player-hand, .dealer-hand {
+  width: 45%;
+  padding: 10px;
+  border: 2px solid white;
+  border-radius: 10px;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.player-hand h2, .dealer-hand h2 {
+  text-align: center;
+}
+
+.game-message {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 1.5rem;
+  z-index: 1000;
 }
 
 @keyframes App-logo-spin {
