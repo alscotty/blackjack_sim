@@ -10,6 +10,7 @@ const GameTable = () => {
   const [balance, setBalance] = useState(1000); // Starting balance
   const [gameMessage, setGameMessage] = useState('');
   const [gameOver, setGameOver] = useState(false);
+  const [isFirstTurn, setIsFirstTurn] = useState(true);
 
   const dealInitialCards = () => {
     const newDeck = [...deck];
@@ -20,6 +21,7 @@ const GameTable = () => {
     setDeck(newDeck);
     setGameOver(false);
     setGameMessage('');
+    setIsFirstTurn(true);
   };
 
   const handleBet = (amount) => {
@@ -42,6 +44,8 @@ const GameTable = () => {
       setGameMessage("You busted! You lose!");
       setGameOver(true);
     }
+
+    setIsFirstTurn(false);
   };
 
   const playerStand = () => {
@@ -65,6 +69,23 @@ const GameTable = () => {
     }
 
     setGameOver(true);
+    setIsFirstTurn(false);
+  };
+
+  const playerDoubleDown = () => {
+    if (balance >= bet) {
+      setBalance(balance - bet);
+      setBet(bet * 2);
+
+      const newDeck = [...deck];
+      const newCard = newDeck.pop();
+      const newPlayerHand = [...playerHand, newCard];
+      setPlayerHand(newPlayerHand);
+      setDeck(newDeck);
+
+      // End the game after doubling down
+      playerStand();
+    }
   };
 
   const renderDealerHand = () => {
@@ -87,6 +108,7 @@ const GameTable = () => {
       <br/>
       <button onClick={playerHit} disabled={playerHand.length === 0 || gameOver}>Hit</button>
       <button onClick={playerStand} disabled={playerHand.length === 0 || gameOver}>Stand</button>
+      <button onClick={playerDoubleDown} disabled={!isFirstTurn || gameOver || balance < bet}>Double Down</button>
       {gameMessage && <div className="game-message">{gameMessage}</div>}
       <div className="hand-container">
         <div className="player-hand">
