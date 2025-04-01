@@ -36,8 +36,8 @@ body {
 
 .hand-container {
   display: flex;
-  justify-content: space-between;
-  margin: 20px;
+  justify-content: space-around;
+  margin: 10px;
 }
 
 .player-hand, .dealer-hand {
@@ -63,6 +63,22 @@ body {
   border-radius: 5px;
   font-size: 1.5rem;
   z-index: 1000;
+}
+
+.game-table {
+  padding: 20px;
+  position: relative;
+}
+
+.card-tally {
+  position: absolute;
+  top: 80px;
+  right: 80px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  border-radius: 5px;
 }
 
 @keyframes App-logo-spin {

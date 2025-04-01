@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import gameConfig from '../config/gameConfig';
 import { createDeck, calculateHandValue } from '../game/blackjackLogic';
 
@@ -12,6 +12,27 @@ const GameTable = () => {
     const [gameOver, setGameOver] = useState(false);
     const [isFirstTurn, setIsFirstTurn] = useState(true);
     const [numDecks, setNumDecks] = useState(gameConfig.numDecks);
+    const [unseenOthers, setUnseenOthers] = useState(0);
+    const [unseenTens, setUnseenTens] = useState(0);
+
+    useEffect(() => {
+        const totalCards = numDecks * 52;
+        const totalTens = numDecks * 16; // 4 suits * 4 cards (10, J, Q, K) per deck
+        setUnseenOthers(totalCards - totalTens);
+        setUnseenTens(totalTens);
+    }, [numDecks]);
+
+    const reshuffleDeckIfNeeded = () => {
+        const totalCards = numDecks * 52;
+        const usedCards = totalCards - (unseenOthers + unseenTens);
+
+        if (usedCards >= totalCards / 2) {
+            setDeck(createDeck());
+            setUnseenOthers(numDecks * 36); // Reset unseen others (52 - 16 tens per deck)
+            setUnseenTens(numDecks * 16); // Reset unseen tens
+            setGameMessage("Deck reshuffled!");
+        }
+    };
 
     const updateDecks = (newNumDecks) => {
         setNumDecks(newNumDecks);
@@ -30,10 +51,28 @@ const GameTable = () => {
         setIsFirstTurn(true);
     };
 
+    const updateUnseenCounts = (playedCards) => {
+        let othersCount = 0;
+        let tensCount = 0;
+
+        playedCards.forEach((card) => {
+            if (['10', 'J', 'Q', 'K'].includes(card.value)) {
+                tensCount++;
+            } else {
+                othersCount++;
+            }
+        });
+
+        setUnseenOthers((prev) => prev - othersCount);
+        setUnseenTens((prev) => prev - tensCount);
+    };
+
     const dealInitialCards = () => {
+        reshuffleDeckIfNeeded();
         const newDeck = [...deck];
         const playerCards = [newDeck.pop(), newDeck.pop()];
         const dealerCards = [newDeck.pop(), newDeck.pop()];
+        updateUnseenCounts([...playerCards, ...dealerCards]);
         setPlayerHand(playerCards);
         setDealerHand(dealerCards);
         setDeck(newDeck);
@@ -51,9 +90,11 @@ const GameTable = () => {
     };
 
     const playerHit = () => {
+        reshuffleDeckIfNeeded();
         const newDeck = [...deck];
         const newCard = newDeck.pop();
         const newPlayerHand = [...playerHand, newCard];
+        updateUnseenCounts([newCard]);
         setPlayerHand(newPlayerHand);
         setDeck(newDeck);
 
@@ -67,11 +108,14 @@ const GameTable = () => {
     };
 
     const playerStand = () => {
+        reshuffleDeckIfNeeded();
         let newDeck = [...deck];
         let newDealerHand = [...dealerHand];
 
         while (calculateHandValue(newDealerHand) < 17) {
-            newDealerHand.push(newDeck.pop());
+            const newCard = newDeck.pop();
+            newDealerHand.push(newCard);
+            updateUnseenCounts([newCard]);
         }
 
         setDealerHand(newDealerHand);
@@ -95,6 +139,7 @@ const GameTable = () => {
     };
 
     const playerDoubleDown = () => {
+        reshuffleDeckIfNeeded();
         if (balance >= bet) {
             setBalance(balance - bet);
             setBet(bet * 2);
@@ -102,6 +147,7 @@ const GameTable = () => {
             const newDeck = [...deck];
             const newCard = newDeck.pop();
             const newPlayerHand = [...playerHand, newCard];
+            updateUnseenCounts([newCard]);
             setPlayerHand(newPlayerHand);
             setDeck(newDeck);
 
@@ -125,7 +171,7 @@ const GameTable = () => {
     };
 
     return (
-        <div>
+        <div className="game-table">
             <h1>Blackjack</h1>
             <p>Balance: ${balance}</p> <button onClick={() => setBalance(1000)}>Reset Balance to $1K</button>
             <p>Current Bet: ${bet}</p>
@@ -170,6 +216,12 @@ const GameTable = () => {
                     <p>{renderDealerHand()}</p>
                     <p>Value: {gameOver ? calculateHandValue(dealerHand) : 'Hidden'}</p>
                 </div>
+            </div>
+            <div className="card-tally">
+                <h3>Card Tally</h3>
+                <p>Unseen Others: {unseenOthers}</p>
+                <p>Unseen Tens: {unseenTens}</p>
+                <p>Ratio (Others to Tens): {(unseenOthers / unseenTens).toFixed(2)}</p>
             </div>
         </div>
     );
