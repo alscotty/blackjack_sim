@@ -14,6 +14,8 @@ const GameTable = () => {
     const [numDecks, setNumDecks] = useState(gameConfig.numDecks);
     const [unseenOthers, setUnseenOthers] = useState(0);
     const [unseenTens, setUnseenTens] = useState(0);
+    const [splitHands, setSplitHands] = useState([]); // Store split hands
+    const [activeHandIndex, setActiveHandIndex] = useState(0); // Track which hand is active
 
     useEffect(() => {
         const totalCards = numDecks * 52;
@@ -49,6 +51,8 @@ const GameTable = () => {
         setGameMessage('');
         setGameOver(false);
         setIsFirstTurn(true);
+        setSplitHands([]);
+        setActiveHandIndex(0);
     };
 
     const updateUnseenCounts = (playedCards) => {
@@ -107,6 +111,21 @@ const GameTable = () => {
         setIsFirstTurn(false);
     };
 
+    const playNextHand = () => {
+        if (activeHandIndex < splitHands.length - 1) {
+            setActiveHandIndex(activeHandIndex + 1);
+            setPlayerHand(splitHands[activeHandIndex + 1]);
+            setGameMessage('');
+            setGameOver(false);
+            setIsFirstTurn(true);
+        } else {
+            // All hands have been played, end the turn
+            setPlayerHand([]);
+            setSplitHands([]);
+            setActiveHandIndex(0);
+        }
+    };
+
     const playerStand = () => {
         reshuffleDeckIfNeeded();
         let newDeck = [...deck];
@@ -136,6 +155,10 @@ const GameTable = () => {
 
         setGameOver(true);
         setIsFirstTurn(false);
+
+        if (splitHands.length > 0) {
+            playNextHand(); // Move to the next hand if split
+        }
     };
 
     const playerDoubleDown = () => {
@@ -160,6 +183,29 @@ const GameTable = () => {
 
             // End the game after doubling down
             playerStand(true);
+        }
+    };
+
+    const canSplit = () => {
+        return (
+            gameConfig.allowSplit &&
+            playerHand.length === 2 &&
+            playerHand[0].value === playerHand[1].value &&
+            balance >= bet
+        );
+    };
+
+    const handleSplit = () => {
+        if (canSplit()) {
+            const newDeck = [...deck];
+            const firstHand = [playerHand[0], newDeck.pop()];
+            const secondHand = [playerHand[1], newDeck.pop()];
+
+            setSplitHands([firstHand, secondHand]);
+            setPlayerHand(firstHand);
+            setDeck(newDeck);
+            setBalance(balance - bet); // Deduct the bet for the second hand
+            setActiveHandIndex(0); // Start playing the first hand
         }
     };
 
@@ -204,10 +250,16 @@ const GameTable = () => {
             >
                 Double Down
             </button>
+            <button
+                onClick={handleSplit}
+                disabled={!canSplit() || gameOver}
+            >
+                Split
+            </button>
             {gameMessage && <div className="game-message">{gameMessage}</div>}
             <div className="hand-container">
                 <div className="player-hand">
-                    <h2>Player Hand</h2>
+                    <h2>Player Hand {splitHands.length > 0 ? `(Hand ${activeHandIndex + 1})` : ''}</h2>
                     <p>{playerHand.map((card) => `${card.value} of ${card.suit}`).join(', ')}</p>
                     <p>Value: {calculateHandValue(playerHand)}</p>
                 </div>

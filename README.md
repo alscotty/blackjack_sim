@@ -7,7 +7,9 @@ Goals
     - pair splitting allowed []
 - player can modify # of decks []
 - displays running count, # unseen "others" vs # unseen 10's for Ten Count Strategy [x]
+- get card images somewhere to use []
 - add test cases []
+- refactor/clean up []
 
 ## Available Scripts
 
