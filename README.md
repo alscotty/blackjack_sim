@@ -6,7 +6,7 @@ Goals
     - doubling down allowed [x]
     - pair splitting allowed []
 - player can modify # of decks []
-- displays running count, # unseen "others" vs # unseen 10's for Ten Count Strategy []
+- displays running count, # unseen "others" vs # unseen 10's for Ten Count Strategy [x]
 - add test cases []
 
 ## Available Scripts
