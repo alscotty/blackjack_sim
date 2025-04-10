@@ -1,6 +1,6 @@
 ## Getting started 
 - Goal to create a blackjack game - all html/react so I can later use Serenade AI to practice with voice commands only! Ex. say "Hit" or "Stand" to play the game
-Practice for myself on the Ten Count Strategy, founded by Ed Thorp, a genius mathmetician, blackjack player, and hedge fund manager on Wall Street
+- Practice for myself on the Ten Count Strategy, founded by Ed Thorp, a genius mathmetician, blackjack player, and hedge fund manager on Wall Street
 
 ## Goals
 - blackjack core gameplay []
