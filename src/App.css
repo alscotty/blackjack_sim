@@ -2,6 +2,8 @@ body {
   background-color: green;
   color: white;
   font-family: Arial, sans-serif;
+  font-size: 20px;
+  font-weight: bold;
 }
 
 .App {
@@ -37,12 +39,12 @@ body {
 .hand-container {
   display: flex;
   justify-content: space-around;
-  margin: 10px;
+  margin: 5px;
 }
 
 .player-hand, .dealer-hand {
   width: 45%;
-  padding: 10px;
+  padding: 8px;
   border: 2px solid white;
   border-radius: 10px;
   background-color: rgba(0, 0, 0, 0.5);
@@ -50,32 +52,33 @@ body {
 
 .player-hand h2, .dealer-hand h2 {
   text-align: center;
+  margin: 5px 0;
 }
 
 .game-message {
   position: fixed;
-  top: 20px;
+  top: 10px;
   left: 50%;
   transform: translateX(-50%);
   background-color: rgba(0, 0, 0, 0.8);
   color: white;
-  padding: 10px 20px;
+  padding: 8px 16px;
   border-radius: 5px;
   font-size: 1.5rem;
   z-index: 1000;
 }
 
 .game-table {
-  padding: 20px;
+  padding: 10px;
   position: relative;
 }
 
 .card-tally {
   position: absolute;
-  top: 80px;
-  right: 80px;
+  top: 60px;
+  right: 60px;
   border: 1px solid #ccc;
-  padding: 10px;
+  padding: 8px;
   background-color: rgba(0, 0, 0, 0.5);
   color: white;
   border-radius: 5px;
@@ -89,3 +92,63 @@ body {
     transform: rotate(360deg);
   }
 }
+
+/* Base button styles */
+.game-table button {
+  padding: 10px 20px;
+  margin: 5px;
+  font-size: 18px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 150px;
+}
+
+.betting > button {
+  background-color: lightgreen;
+  font-size: 20px;
+  padding: 8px 20px;
+  min-width: 100px;
+  border-radius: 25px;
+  margin: 3px;
+}
+
+.betting > button:hover {
+  background-color: rgb(65, 226, 65);
+}
+
+.player-actions > button {
+  background-color: lightblue;
+  margin: 3px;
+}
+.player-actions > button:hover{
+  background-color: rgb(38, 91, 165);
+}
+
+#reset {
+background-color: rgb(232, 192, 108);
+}
+
+#reset:hover {
+  background-color: coral;
+}
+
+.game-table button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.game-table button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.game-table button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+

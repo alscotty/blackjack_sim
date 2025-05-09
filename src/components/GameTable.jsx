@@ -216,11 +216,16 @@ const GameTable = () => {
         return dealerHand.map((card) => `${card.value} of ${card.suit}`).join(', ');
     };
 
+    const payoutsMapping = {
+        1.5: "3:2"
+    }
+
     return (
         <div className="game-table">
             <h1>Blackjack</h1>
-            <p>Balance: ${balance}</p> <button onClick={() => setBalance(1000)}>Reset Balance to $1K</button>
+            <p>Balance: ${balance}</p> <button id="reset" onClick={() => setBalance(1000)}>Reset Balance to $1K</button>
             <p>Current Bet: ${bet}</p>
+            <p>Payout {payoutsMapping[gameConfig.blackjackPayout]}</p>
             <label>
                 Number of Decks:
                 <select
@@ -236,26 +241,31 @@ const GameTable = () => {
                 </select>
             </label>
             <br />
-            <button onClick={() => handleBet(10)} disabled={gameOver}>Bet $10</button>
-            <button onClick={() => handleBet(50)} disabled={gameOver}>Bet $50</button>
-            <button onClick={() => handleBet(100)} disabled={gameOver}>Bet $100</button>
+            <span className='betting'>
+                <button onClick={() => handleBet(10)} disabled={gameOver}>Bet $10</button>
+                <button onClick={() => handleBet(50)} disabled={gameOver}>Bet $50</button>
+                <button onClick={() => handleBet(100)} disabled={gameOver}>Bet $100</button>
+                {gameOver && <button onClick={dealInitialCards}>Play Again</button>}
+            </span>
             <br />
-            {gameOver && <button onClick={dealInitialCards}>Play Again</button>}
             <br />
-            <button onClick={playerHit} disabled={playerHand.length === 0 || gameOver}>Hit</button>
-            <button onClick={playerStand} disabled={playerHand.length === 0 || gameOver}>Stand</button>
-            <button
-                onClick={playerDoubleDown}
-                disabled={!isFirstTurn || gameOver || balance < bet || playerHand.length === 0}
-            >
-                Double Down
-            </button>
-            <button
-                onClick={handleSplit}
-                disabled={!canSplit() || gameOver}
-            >
-                Split
-            </button>
+            <div className='player-actions'>
+                <button onClick={playerHit} disabled={playerHand.length === 0 || gameOver}>Hit</button>
+                <button onClick={playerStand} disabled={playerHand.length === 0 || gameOver}>Stand</button>
+                <button
+                    onClick={playerDoubleDown}
+                    disabled={!isFirstTurn || gameOver || balance < bet || playerHand.length === 0}
+                >
+                    Double Down
+                </button>
+                <button
+                    onClick={handleSplit}
+                    disabled={!canSplit() || gameOver}
+                >
+                    Split
+                </button>
+
+            </div>
             {gameMessage && <div className="game-message">{gameMessage}</div>}
             <div className="hand-container">
                 <div className="player-hand">
