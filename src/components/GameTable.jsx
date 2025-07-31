@@ -297,7 +297,7 @@ const GameTable = () => {
                             ))
                         )}
                     </div>
-                    <p>Value: {gameOver ? calculateHandValue(dealerHand) : 'Hidden'}</p>
+                    <p>Value: {gameOver ? calculateHandValue(dealerHand) : renderDealerHand(dealerHand)}</p>
                 </div>
             </div>
             <div className="card-tally">

@@ -156,11 +156,9 @@ background-color: rgb(232, 192, 108);
 .cards-display {
   display: flex;
   justify-content: center;
-  align-items: flex-start; /* Align to top since cards now have labels below */
-  flex-wrap: nowrap; /* Prevent wrapping to keep cards side by side */
-  gap: 15px; /* Increased gap between cards */
+  align-items: flex-start;
+  flex-wrap: nowrap; 
   margin: 10px 0;
-  min-height: 250px; /* Increased height to accommodate cards with much larger labels */
 }
 
 .cards-display > div {
@@ -169,17 +167,6 @@ background-color: rgb(232, 192, 108);
   transition: transform 0.2s ease;
 }
 
-.cards-display > div:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
-}
-
-/* Card sizing for large cards */
-.cards-display > div {
-  transform: scale(0.25); /* Increased scale for better visibility */
-  transform-origin: center;
-  margin: 0 5px; /* Add some spacing between cards */
-}
 
 /* Responsive card sizing */
 @media (max-width: 768px) {

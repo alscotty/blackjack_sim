@@ -1,6 +1,10 @@
 import React from 'react';
 import allCardsImage from '../assets/all_cards.png';
 
+const SCALE = 3.5
+const CARD_WIDTH = 190;
+const CARD_HEIGHT = 273;
+
 const CardSpriteRendering = ({ card, isHidden = false }) => {
     // Card sprite sheet mapping
     const getCardSpritePosition = (card) => {
@@ -12,14 +16,12 @@ const CardSpriteRendering = ({ card, isHidden = false }) => {
         const row = suitOrder[card.suit];
         const col = valueOrder[card.value];
 
-        const cardWidth = 190;
-        const cardHeight = 273;
-
+      
         return {
             backgroundImage: `url(${allCardsImage})`,
-            backgroundPosition: `-${col * cardWidth}px -${row * (cardHeight)}px`,
-            width: `${cardWidth}px`,
-            height: `${cardHeight}px`,
+            backgroundPosition: `-${col * CARD_WIDTH}px -${row * (CARD_HEIGHT)}px`,
+            width: `${CARD_WIDTH}px`,
+            height: `${CARD_HEIGHT}px`,
         };
     };
 
@@ -27,8 +29,8 @@ const CardSpriteRendering = ({ card, isHidden = false }) => {
     if (isHidden) {
         return (
             <div style={{
-                width: '88px', // 354 * 0.25 scale
-                height: '156px', // 626 * 0.25 scale
+                width: `${CARD_WIDTH * SCALE}px`, 
+                height: `${CARD_HEIGHT * SCALE}px`, 
                 border: '2px solid white',
                 borderRadius: '5px',
                 backgroundColor: 'rgba(255, 255, 255, 0.1)',
@@ -41,7 +43,10 @@ const CardSpriteRendering = ({ card, isHidden = false }) => {
     return (
         <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
             <div 
-                style={getCardSpritePosition(card)}
+                style={{
+                    ...getCardSpritePosition(card),
+                    transform: `scale(${SCALE})`,
+                }}
                 title={`${card.value} of ${card.suit}`}
             />
             <div style={{
@@ -50,7 +55,6 @@ const CardSpriteRendering = ({ card, isHidden = false }) => {
                 fontWeight: 'bold',
                 textAlign: 'center',
                 backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                padding: '8px 12px',
                 borderRadius: '10px',
             }}>
                 {`${card.value} of ${card.suit}`}
