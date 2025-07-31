@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import gameConfig from '../config/gameConfig';
 import { createDeck, calculateHandValue } from '../game/blackjackLogic';
+import CardSpriteRendering from './cardSpriteRendering.jsx';
 
 const GameTable = () => {
     const [deck, setDeck] = useState(createDeck());
@@ -217,6 +218,8 @@ const GameTable = () => {
         return dealerHand.map((card) => `${card.value} of ${card.suit}`).join(', ');
     };
 
+
+
     const payoutsMapping = {
         1.5: "3:2"
     }
@@ -271,12 +274,29 @@ const GameTable = () => {
             <div className="hand-container">
                 <div className="player-hand">
                     <h2>Player Hand {splitHands.length > 0 ? `(Hand ${activeHandIndex + 1})` : ''}</h2>
-                    <p>{playerHand.map((card) => `${card.value} of ${card.suit}`).join(', ')}</p>
+                    <div className="cards-display">
+                        {playerHand.map((card) => (
+                            <CardSpriteRendering key={`${card.value}-${card.suit}`} card={card} />
+                        ))}
+                    </div>
                     <p>Value: {calculateHandValue(playerHand)}</p>
                 </div>
                 <div className="dealer-hand">
                     <h2>Dealer Hand</h2>
-                    <p>{renderDealerHand()}</p>
+                    <div className="cards-display">
+                        {!gameOver ? (
+                            <>
+                                <CardSpriteRendering card={{value: 'back', suit: 'back'}} isHidden={true} />
+                                {dealerHand.slice(1).map((card) => (
+                                    <CardSpriteRendering key={`${card.value}-${card.suit}`} card={card} />
+                                ))}
+                            </>
+                        ) : (
+                            dealerHand.map((card) => (
+                                <CardSpriteRendering key={`${card.value}-${card.suit}`} card={card} />
+                            ))
+                        )}
+                    </div>
                     <p>Value: {gameOver ? calculateHandValue(dealerHand) : 'Hidden'}</p>
                 </div>
             </div>
