@@ -16,6 +16,7 @@ const GameTable = () => {
     const [unseenTens, setUnseenTens] = useState(0);
     const [splitHands, setSplitHands] = useState([]); // Store split hands
     const [activeHandIndex, setActiveHandIndex] = useState(0); // Track which hand is active
+    const [showCardTally, setShowCardTally] = useState(true); // Toggle for card tally visibility
 
     useEffect(() => {
         const totalCards = numDecks * 52;
@@ -281,9 +282,19 @@ const GameTable = () => {
             </div>
             <div className="card-tally">
                 <h3>Card Tally</h3>
-                <p>Unseen Others: {unseenOthers}</p>
-                <p>Unseen Tens: {unseenTens}</p>
-                <p>Ratio (Others to Tens): {(unseenOthers / unseenTens).toFixed(2)}</p>
+                <button 
+                    onClick={() => setShowCardTally(!showCardTally)}
+                    className="toggle-tally-btn"
+                >
+                    {showCardTally ? 'Hide Numbers' : 'Show Numbers'}
+                </button>
+                {showCardTally && (
+                    <>
+                        <p>Unseen Others: {unseenOthers}</p>
+                        <p>Unseen Tens: {unseenTens}</p>
+                        <p>Ratio (Others to Tens): {(unseenOthers / unseenTens).toFixed(2)}</p>
+                    </>
+                )}
             </div>
         </div>
     );
