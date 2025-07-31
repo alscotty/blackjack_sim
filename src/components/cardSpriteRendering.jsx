@@ -1,7 +1,7 @@
 import React from 'react';
 import allCardsImage from '../assets/all_cards.png';
 
-const SCALE = 0.8
+const SCALE = 0.65
 const CARD_WIDTH = 190;
 const CARD_HEIGHT = 273;
 
@@ -40,7 +40,7 @@ const CardSpriteRendering = ({ card, isHidden = false }) => {
     }
 
     return (
-        <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+        <div className='card-and-text-container'>
             <div 
                 style={{
                     ...getCardSpritePosition(card),
@@ -48,15 +48,7 @@ const CardSpriteRendering = ({ card, isHidden = false }) => {
                 }}
                 title={`${card.value} of ${card.suit}`}
             />
-            <div style={{
-                color: 'white',
-                fontSize: '80px',
-                fontWeight: 'bold',
-                textAlign: 'center',
-                backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                borderRadius: '10px',
-                transform: `scale(0.3)`,
-            }}>
+            <div>
                 {`${card.value} of ${card.suit}`}
             </div>
         </div>

@@ -226,7 +226,7 @@ const GameTable = () => {
 
     return (
         <div className="game-table">
-            <h1>Blackjack</h1>
+            <h3>Blackjack</h3>
             <p>Balance: ${balance}</p> <button id="reset" onClick={() => setBalance(1000)}>Reset Balance to $1K</button>
             <p>Current Bet: ${bet}</p>
             <p>Payout {payoutsMapping[gameConfig.blackjackPayout]}</p>
@@ -286,7 +286,7 @@ const GameTable = () => {
                     <div className="cards-display">
                         {!gameOver ? (
                             <>
-                                <CardSpriteRendering card={{value: 'back', suit: 'back'}} isHidden={true} />
+                                <CardSpriteRendering card={{ value: 'back', suit: 'back' }} isHidden={true} />
                                 {dealerHand.slice(1).map((card) => (
                                     <CardSpriteRendering key={`${card.value}-${card.suit}`} card={card} />
                                 ))}
@@ -302,7 +302,7 @@ const GameTable = () => {
             </div>
             <div className="card-tally">
                 <h3>Card Tally</h3>
-                <button 
+                <button
                     onClick={() => setShowCardTally(!showCardTally)}
                     className="toggle-tally-btn"
                 >
