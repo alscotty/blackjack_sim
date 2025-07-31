@@ -44,7 +44,6 @@ body {
 
 .player-hand, .dealer-hand {
   width: 45%;
-  padding: 8px;
   border: 2px solid white;
   border-radius: 10px;
   background-color: rgba(0, 0, 0, 0.5);
@@ -52,7 +51,6 @@ body {
 
 .player-hand h2, .dealer-hand h2 {
   text-align: center;
-  margin: 5px 0;
 }
 
 .game-message {
@@ -157,8 +155,6 @@ background-color: rgb(232, 192, 108);
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  flex-wrap: nowrap; 
-  margin: 10px 0;
 }
 
 .cards-display > div {
@@ -166,18 +162,3 @@ background-color: rgb(232, 192, 108);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   transition: transform 0.2s ease;
 }
-
-
-/* Responsive card sizing */
-@media (max-width: 768px) {
-  .cards-display > div {
-    transform: scale(0.15) !important; /* Slightly larger on mobile */
-  }
-}
-
-@media (min-width: 1200px) {
-  .cards-display > div {
-    transform: scale(0.3) !important; /* Larger on big screens */
-  }
-}
-

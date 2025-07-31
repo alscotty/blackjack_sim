@@ -1,12 +1,11 @@
 import React from 'react';
 import allCardsImage from '../assets/all_cards.png';
 
-const SCALE = 3.5
+const SCALE = 0.8
 const CARD_WIDTH = 190;
 const CARD_HEIGHT = 273;
 
 const CardSpriteRendering = ({ card, isHidden = false }) => {
-    // Card sprite sheet mapping
     const getCardSpritePosition = (card) => {
         // Correct suit order: clubs, spades, hearts, diamonds
         const suitOrder = { 'clubs': 0, 'diamonds': 1, 'hearts': 2, 'spades': 3 };
@@ -56,6 +55,7 @@ const CardSpriteRendering = ({ card, isHidden = false }) => {
                 textAlign: 'center',
                 backgroundColor: 'rgba(0, 0, 0, 0.5)',
                 borderRadius: '10px',
+                transform: `scale(0.3)`,
             }}>
                 {`${card.value} of ${card.suit}`}
             </div>
