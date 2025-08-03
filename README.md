@@ -1,14 +1,17 @@
 ## Getting started 
+Play on live site [here](https://alscotty.github.io/blackjack_sim/)
 - Goal to create a blackjack game - all html/react so I can later use Serenade AI to practice with voice commands only! Ex. say "Hit" or "Stand" to play the game
 - Practice for myself on the Ten Count Strategy, founded by Ed Thorp, a genius mathmetician, blackjack player, and hedge fund manager on Wall Street
 
 ![Blackjack Game Screenshot](game_picture.png)
 
 ## Goals
-- blackjack core gameplay []
+- blackjack core gameplay [x]
     - doubling down allowed [x]
-    - pair splitting allowed []
-- player can modify # of decks []
+    - pair splitting allowed [x]
+- player can modify # of decks [x]
+- player can change bet size without losing extra $ in-between hands []
+- add serenade shortcuts/scripts []
 - displays running count, # unseen "others" vs # unseen 10's for Ten Count Strategy [x]
 - get card images somewhere to use [x]
 - option to toggle payout ratio, or just set to whatever is most common in Vegas tables []
