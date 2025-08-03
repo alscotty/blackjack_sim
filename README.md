@@ -10,8 +10,8 @@
     - pair splitting allowed []
 - player can modify # of decks []
 - displays running count, # unseen "others" vs # unseen 10's for Ten Count Strategy [x]
-- get card images somewhere to use []
-- option to toggle payout ratio, or just set to whatever is most common in Vegas tables
+- get card images somewhere to use [x]
+- option to toggle payout ratio, or just set to whatever is most common in Vegas tables []
 - add test cases []
 - refactor/clean up []
 
