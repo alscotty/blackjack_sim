@@ -75,16 +75,20 @@ const GameTable = () => {
 
     const dealInitialCards = () => {
         reshuffleDeckIfNeeded();
+        
         const newDeck = [...deck];
         const playerCards = [newDeck.pop(), newDeck.pop()];
         const dealerCards = [newDeck.pop(), newDeck.pop()];
         updateUnseenCounts([...playerCards, ...dealerCards]);
+        
         setPlayerHand(playerCards);
         setDealerHand(dealerCards);
         setDeck(newDeck);
         setGameOver(false);
         setGameMessage('');
         setIsFirstTurn(true);
+        setSplitHands([]);
+        setActiveHandIndex(0);
     };
 
     const handleBet = (amount) => {
@@ -249,7 +253,13 @@ const GameTable = () => {
                 <button onClick={() => handleBet(10)} disabled={gameOver}>Bet $10</button>
                 <button onClick={() => handleBet(50)} disabled={gameOver}>Bet $50</button>
                 <button onClick={() => handleBet(100)} disabled={gameOver}>Bet $100</button>
-                {gameOver && <button onClick={dealInitialCards}>Play Again</button>}
+                {gameOver && <button onClick={() => {
+                    setPlayerHand([]);
+                    setDealerHand([]);
+                    setSplitHands([]);
+                    setActiveHandIndex(0);
+                    setTimeout(() => dealInitialCards(), 0);
+                }}>Play Again</button>}
             </span>
             <br />
             <br />
