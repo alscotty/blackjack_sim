@@ -231,100 +231,112 @@ const GameTable = () => {
     return (
         <div className="game-table">
             <h3>Blackjack</h3>
-            <p>Balance: ${balance}</p> <button id="reset" onClick={() => setBalance(1000)}>Reset Balance to $1K</button>
-            <p>Current Bet: ${bet}</p>
-            <p>Payout {payoutsMapping[gameConfig.blackjackPayout]}</p>
-            <label>
-                Number of Decks:
-                <select
-                    value={numDecks}
-                    onChange={(e) => updateDecks(parseInt(e.target.value, 10))}
-                    disabled={playerHand.length > 0 || dealerHand.length > 0}
-                >
-                    {[1, 2, 4, 6, 8].map((deckCount) => (
-                        <option key={deckCount} value={deckCount}>
-                            {deckCount}
-                        </option>
-                    ))}
-                </select>
-            </label>
-            <br />
-            <span className='betting'>
-                <button onClick={() => handleBet(10)} disabled={gameOver}>Bet $10</button>
-                <button onClick={() => handleBet(50)} disabled={gameOver}>Bet $50</button>
-                <button onClick={() => handleBet(100)} disabled={gameOver}>Bet $100</button>
-                {gameOver && <button onClick={() => {
-                    setPlayerHand([]);
-                    setDealerHand([]);
-                    setSplitHands([]);
-                    setActiveHandIndex(0);
-                    setTimeout(() => dealInitialCards(), 0);
-                }}>Play Again</button>}
-            </span>
-            <br />
-            <br />
-            <div className='player-actions'>
-                <button onClick={playerHit} disabled={playerHand.length === 0 || gameOver}>Hit</button>
-                <button onClick={playerStand} disabled={playerHand.length === 0 || gameOver}>Stand</button>
-                <button
-                    onClick={playerDoubleDown}
-                    disabled={!isFirstTurn || gameOver || balance < bet || playerHand.length === 0}
-                >
-                    Double Down
-                </button>
-                <button
-                    onClick={handleSplit}
-                    disabled={!canSplit() || gameOver}
-                >
-                    Split
-                </button>
-
+            
+            {/* Game Stats */}
+            <div className="game-stats">
+                <p><strong>Balance:</strong> ${balance}</p>
+                <p><strong>Current Bet:</strong> ${bet}</p>
+                <p><strong>Payout:</strong> {payoutsMapping[gameConfig.blackjackPayout]}</p>
+                <button id="reset" onClick={() => setBalance(1000)}>Reset Balance to $1K</button>
+            </div>
+            
+            {/* Game Controls */}
+            <div className="game-controls">
+                <label>
+                    Number of Decks:
+                    <select
+                        value={numDecks}
+                        onChange={(e) => updateDecks(parseInt(e.target.value, 10))}
+                        disabled={playerHand.length > 0 || dealerHand.length > 0}
+                    >
+                        {[1, 2, 4, 6, 8].map((deckCount) => (
+                            <option key={deckCount} value={deckCount}>
+                                {deckCount}
+                            </option>
+                        ))}
+                    </select>
+                </label>
+            </div>
+            
+            {/* Game Controls */}
+            <div className='game-controls-row'>
+                <div className='betting'>
+                    <button onClick={() => handleBet(10)} disabled={gameOver}>Bet $10</button>
+                    <button onClick={() => handleBet(50)} disabled={gameOver}>Bet $50</button>
+                    <button onClick={() => handleBet(100)} disabled={gameOver}>Bet $100</button>
+                    {gameOver && <button onClick={() => {
+                        setPlayerHand([]);
+                        setDealerHand([]);
+                        setSplitHands([]);
+                        setActiveHandIndex(0);
+                        setTimeout(() => dealInitialCards(), 0);
+                    }}>Play Again</button>}
+                </div>
+                
+                <div className='player-actions'>
+                    <button onClick={playerHit} disabled={playerHand.length === 0 || gameOver}>Hit</button>
+                    <button onClick={playerStand} disabled={playerHand.length === 0 || gameOver}>Stand</button>
+                    <button
+                        onClick={playerDoubleDown}
+                        disabled={!isFirstTurn || gameOver || balance < bet || playerHand.length === 0}
+                    >
+                        Double Down
+                    </button>
+                    <button
+                        onClick={handleSplit}
+                        disabled={!canSplit() || gameOver}
+                    >
+                        Split
+                    </button>
+                </div>
             </div>
             {gameMessage && <div className="game-message">{gameMessage}</div>}
-            <div className="hand-container">
-                <div className="player-hand">
-                    <h2>Player Hand {splitHands.length > 0 ? `(Hand ${activeHandIndex + 1})` : ''}</h2>
-                    <div className="cards-display">
-                        {playerHand.map((card) => (
-                            <CardSpriteRendering key={`${card.value}-${card.suit}`} card={card} />
-                        ))}
-                    </div>
-                    <p>Value: {calculateHandValue(playerHand)}</p>
-                </div>
-                <div className="dealer-hand">
-                    <h2>Dealer Hand</h2>
-                    <div className="cards-display">
-                        {!gameOver ? (
-                            <>
-                                <CardSpriteRendering card={{ value: 'back', suit: 'back' }} isHidden={true} />
-                                {dealerHand.slice(1).map((card) => (
-                                    <CardSpriteRendering key={`${card.value}-${card.suit}`} card={card} />
-                                ))}
-                            </>
-                        ) : (
-                            dealerHand.map((card) => (
+            <div className="game-layout">
+                <div className="hand-container">
+                    <div className="player-hand">
+                        <h2>Player Hand {splitHands.length > 0 ? `(Hand ${activeHandIndex + 1})` : ''}</h2>
+                        <div className="cards-display">
+                            {playerHand.map((card) => (
                                 <CardSpriteRendering key={`${card.value}-${card.suit}`} card={card} />
-                            ))
-                        )}
+                            ))}
+                        </div>
+                        <p>Value: {calculateHandValue(playerHand)}</p>
                     </div>
-                    <p>Value: {gameOver ? calculateHandValue(dealerHand) : renderDealerHand(dealerHand)}</p>
+                    <div className="dealer-hand">
+                        <h2>Dealer Hand</h2>
+                        <div className="cards-display">
+                            {!gameOver ? (
+                                <>
+                                    <CardSpriteRendering card={{ value: 'back', suit: 'back' }} isHidden={true} />
+                                    {dealerHand.slice(1).map((card) => (
+                                        <CardSpriteRendering key={`${card.value}-${card.suit}`} card={card} />
+                                    ))}
+                                </>
+                            ) : (
+                                dealerHand.map((card) => (
+                                    <CardSpriteRendering key={`${card.value}-${card.suit}`} card={card} />
+                                ))
+                            )}
+                        </div>
+                        <p>Value: {gameOver ? calculateHandValue(dealerHand) : renderDealerHand(dealerHand)}</p>
+                    </div>
                 </div>
-            </div>
-            <div className="card-tally">
-                <h3>Card Tally</h3>
-                <button
-                    onClick={() => setShowCardTally(!showCardTally)}
-                    className="toggle-tally-btn"
-                >
-                    {showCardTally ? 'Hide Numbers' : 'Show Numbers'}
-                </button>
-                {showCardTally && (
-                    <>
-                        <p>Unseen Others: {unseenOthers}</p>
-                        <p>Unseen Tens: {unseenTens}</p>
-                        <p>Ratio (Others to Tens): {(unseenOthers / unseenTens).toFixed(2)}</p>
-                    </>
-                )}
+                <div className="card-tally">
+                    <h3>Card Tally</h3>
+                    <button
+                        onClick={() => setShowCardTally(!showCardTally)}
+                        className="toggle-tally-btn"
+                    >
+                        {showCardTally ? 'Hide Numbers' : 'Show Numbers'}
+                    </button>
+                    {showCardTally && (
+                        <>
+                            <p>Unseen Others: {unseenOthers}</p>
+                            <p>Unseen Tens: {unseenTens}</p>
+                            <p>Ratio (Others to Tens): {(unseenOthers / unseenTens).toFixed(2)}</p>
+                        </>
+                    )}
+                </div>
             </div>
         </div>
     );

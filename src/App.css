@@ -1,174 +1,460 @@
+/* Professional Blackjack Game Styling */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+* {
+  box-sizing: border-box;
+}
+
 body {
-  background-color: green;
-  color: white;
-  font-family: Arial, sans-serif;
-  font-size: 20px;
-  font-weight: bold;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(135deg, #1a472a 0%, #2d5a3d 50%, #1a472a 100%);
+  color: #ffffff;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
 }
 
 .App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
   min-height: 100vh;
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Header and Game Info */
+.game-table {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 20px;
+  padding: 30px;
+  margin-bottom: 20px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.game-table h3 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  text-align: center;
+  margin: 0 0 30px 0;
+  background: linear-gradient(45deg, #ffd700, #ffed4e);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Game Stats */
+.game-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.game-stats p {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #e0e0e0;
+}
+
+.game-stats strong {
+  color: #ffd700;
+  font-weight: 600;
+}
+
+/* Game Controls Row */
+.game-controls-row {
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-.hand-container {
-  display: flex;
-  justify-content: space-evenly;
-  margin: 0px;
+  gap: 30px;
+  margin: 25px 0;
   flex-wrap: wrap;
 }
 
-.player-hand, .dealer-hand {
-  width: 45%;
-  border: 2px solid white;
-  border-radius: 10px;
-  background-color: rgba(0, 0, 0, 0.5);
+/* Betting Controls */
+.betting {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
 }
 
-.player-hand h2, .dealer-hand h2 {
-  text-align: center;
-  padding:0px;
-}
-
-.game-message {
-  position: fixed;
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: rgba(0, 0, 0, 0.8);
+.betting button {
+  background: linear-gradient(135deg, #4CAF50, #45a049);
   color: white;
-  padding: 8px 16px;
-  border-radius: 5px;
-  font-size: 1.5rem;
-  z-index: 1000;
-}
-
-.game-table {
-  padding: 10px;
-  margin-bottom: 0px;
-}
-
-.card-tally {
-  position: absolute;
-  top: 60px;
-  right: 60px;
-  border: 1px solid #ccc;
-  padding: 8px;
-  background-color: rgba(0, 0, 0, 0.5);
-  color: white;
-  border-radius: 5px;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* Base button styles */
-.game-table button {
-  padding: 10px 20px;
-  margin: 5px;
-  font-size: 18px;
-  font-weight: 600;
   border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  min-width: 150px;
-}
-
-.betting > button {
-  background-color: lightgreen;
-  font-size: 20px;
-  padding: 3px 20px;
-  min-width: 100px;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 600;
   border-radius: 25px;
-  margin: 1px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 120px;
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+  position: relative;
+  overflow: hidden;
 }
 
-.betting > button:hover {
-  background-color: rgb(65, 226, 65);
-}
-
-.player-actions > button {
-  background-color: lightblue;
-  margin: 3px;
-}
-.player-actions > button:hover{
-  background-color: rgb(38, 91, 165);
-}
-
-#reset {
-background-color: rgb(232, 192, 108);
-}
-
-#reset:hover {
-  background-color: coral;
-}
-
-.game-table button:hover {
+.betting button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+  background: linear-gradient(135deg, #45a049, #4CAF50);
 }
 
-.game-table button:active {
+.betting button:active {
   transform: translateY(0);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.game-table button:disabled {
-  background-color: #cccccc;
+.betting button:disabled {
+  background: #666;
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
 }
 
-/* Card display styles */
+/* Player Actions */
+.player-actions {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.player-actions button {
+  background: linear-gradient(135deg, #2196F3, #1976D2);
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 140px;
+  box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+}
+
+.player-actions button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(33, 150, 243, 0.4);
+  background: linear-gradient(135deg, #1976D2, #2196F3);
+}
+
+.player-actions button:active {
+  transform: translateY(0);
+}
+
+.player-actions button:disabled {
+  background: #666;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Reset Button */
+#reset {
+  background: linear-gradient(135deg, #FF9800, #F57C00);
+  box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
+}
+
+#reset:hover {
+  background: linear-gradient(135deg, #F57C00, #FF9800);
+  box-shadow: 0 8px 25px rgba(255, 152, 0, 0.4);
+}
+
+/* Game Controls */
+.game-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  margin: 25px 0;
+  flex-wrap: wrap;
+}
+
+.game-controls label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 500;
+  color: #e0e0e0;
+}
+
+.game-controls select {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.game-controls select:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.game-controls select:focus {
+  outline: none;
+  border-color: #ffd700;
+  box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.2);
+}
+
+/* Game Layout */
+.game-layout {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 30px;
+  margin: 30px 0;
+  align-items: start;
+}
+
+/* Hand Containers */
+.hand-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+}
+
+.player-hand, .dealer-hand {
+  background: rgba(0, 0, 0, 0.4);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  padding: 25px;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.player-hand:hover, .dealer-hand:hover {
+  border-color: rgba(255, 215, 0, 0.3);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.player-hand h2, .dealer-hand h2 {
+  text-align: center;
+  margin: 0 0 20px 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #ffd700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
 .cards-display {
   display: flex;
-  flex-wrap: wrap;
   justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 20px 0;
 }
 
 .cards-display > div {
-  border-radius: 5px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  margin: 0px;
-  padding: 0px;
-  width: 33%;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease;
 }
 
+.cards-display > div:hover {
+  transform: translateY(-5px);
+}
+
+.player-hand p, .dealer-hand p {
+  text-align: center;
+  margin: 15px 0 0 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #e0e0e0;
+}
+
+/* Game Message */
+.game-message {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.8));
+  color: white;
+  padding: 15px 30px;
+  border-radius: 25px;
+  font-size: 1.3rem;
+  font-weight: 600;
+  z-index: 1000;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateX(-50%) translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Card Tally */
+.card-tally {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 20px;
+  border-radius: 15px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  height: fit-content;
+  position: sticky;
+  top: 20px;
+}
+
+.card-tally h3 {
+  margin: 0 0 15px 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #ffd700;
+  text-align: center;
+}
+
+.card-tally p {
+  margin: 8px 0;
+  font-size: 0.9rem;
+  color: #e0e0e0;
+}
+
+.toggle-tally-btn {
+  background: linear-gradient(135deg, #9C27B0, #7B1FA2);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  margin-bottom: 15px;
+  box-shadow: 0 4px 15px rgba(156, 39, 176, 0.3);
+}
+
+.toggle-tally-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(156, 39, 176, 0.4);
+  background: linear-gradient(135deg, #7B1FA2, #9C27B0);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .App {
+    padding: 10px;
+  }
+  
+  .game-table {
+    padding: 20px;
+  }
+  
+  .game-table h3 {
+    font-size: 2rem;
+  }
+  
+  .game-layout {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .hand-container {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .game-controls-row {
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .betting, .player-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .betting button, .player-actions button {
+    width: 200px;
+  }
+  
+  .card-tally {
+    position: relative;
+    top: auto;
+    margin: 20px auto;
+    max-width: 300px;
+  }
+  
+  .game-stats {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .game-table {
+    padding: 15px;
+  }
+  
+  .game-table h3 {
+    font-size: 1.8rem;
+  }
+  
+  .betting button, .player-actions button {
+    width: 100%;
+    max-width: 250px;
+  }
+}
+
+/* Card and Text Container */
 .card-and-text-container {
   display: flex;
   flex-direction: column;
-  align-items: flex-center;
+  align-items: center;
+  text-align: center;
+}
+
+/* Smooth transitions for all interactive elements */
+button, select, .hand-container > div {
+  transition: all 0.3s ease;
+}
+
+/* Focus states for accessibility */
+button:focus, select:focus {
+  outline: 2px solid #ffd700;
+  outline-offset: 2px;
+}
+
+/* Loading states */
+.loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+/* Success/Error message styling */
+.game-message.success {
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.9), rgba(76, 175, 80, 0.8));
+}
+
+.game-message.error {
+  background: linear-gradient(135deg, rgba(244, 67, 54, 0.9), rgba(244, 67, 54, 0.8));
+}
+
+.game-message.warning {
+  background: linear-gradient(135deg, rgba(255, 152, 0, 0.9), rgba(255, 152, 0, 0.8));
 }
