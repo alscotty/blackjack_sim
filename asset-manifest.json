@@ -1,14 +1,14 @@
 {
   "files": {
-    "main.css": "/blackjack_sim/static/css/main.0014e728.css",
-    "main.js": "/blackjack_sim/static/js/main.0b0221d3.js",
+    "main.css": "/blackjack_sim/static/css/main.62589e54.css",
+    "main.js": "/blackjack_sim/static/js/main.eda53b68.js",
     "static/media/all_cards.png": "/blackjack_sim/static/media/all_cards.a2d049a705ae103b1fec.png",
     "index.html": "/blackjack_sim/index.html",
-    "main.0014e728.css.map": "/blackjack_sim/static/css/main.0014e728.css.map",
-    "main.0b0221d3.js.map": "/blackjack_sim/static/js/main.0b0221d3.js.map"
+    "main.62589e54.css.map": "/blackjack_sim/static/css/main.62589e54.css.map",
+    "main.eda53b68.js.map": "/blackjack_sim/static/js/main.eda53b68.js.map"
   },
   "entrypoints": [
-    "static/css/main.0014e728.css",
-    "static/js/main.0b0221d3.js"
+    "static/css/main.62589e54.css",
+    "static/js/main.eda53b68.js"
   ]
 }
