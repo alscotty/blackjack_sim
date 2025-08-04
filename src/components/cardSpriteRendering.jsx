@@ -27,15 +27,25 @@ const CardSpriteRendering = ({ card, isHidden = false }) => {
     // For dealer's down card, show an empty box
     if (isHidden) {
         return (
-            <div style={{
-                width: `${CARD_WIDTH * SCALE}px`, 
-                height: `${CARD_HEIGHT * SCALE}px`, 
-                border: '2px solid white',
-                borderRadius: '5px',
-                backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                display: 'inline-block',
-                margin: '0 2px'
-            }} title="Hidden Card" />
+            <div className='card-and-text-container'>
+                <div 
+                    style={{
+                        width: `${CARD_WIDTH}px`, 
+                        height: `${CARD_HEIGHT}px`, 
+                        border: '2px solid white',
+                        borderRadius: '5px',
+                        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                        display: 'inline-block',
+                        margin: '0 2px',
+                        transform: `scale(${SCALE})`,
+                        transformOrigin: 'top left'
+                    }}
+                    title="Hidden Card" 
+                />
+                <div style={{ height: '0px', overflow: 'hidden' }}>
+                    Hidden Card
+                </div>
+            </div>
         );
     }
 
@@ -45,10 +55,12 @@ const CardSpriteRendering = ({ card, isHidden = false }) => {
                 style={{
                     ...getCardSpritePosition(card),
                     transform: `scale(${SCALE})`,
+                    verticalAlign: 'top',
+                    margin: '0 2px'
                 }}
                 title={`${card.value} of ${card.suit}`}
             />
-            <div>
+            <div style={{ height: '0px', overflow: 'hidden' }}>
                 {`${card.value} of ${card.suit}`}
             </div>
         </div>

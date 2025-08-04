@@ -4,26 +4,55 @@ import { createDeck, calculateHandValue } from '../game/blackjackLogic';
 import CardSpriteRendering from './cardSpriteRendering.jsx';
 
 const GameTable = () => {
-    const [deck, setDeck] = useState(createDeck());
-    const [playerHand, setPlayerHand] = useState([]);
-    const [dealerHand, setDealerHand] = useState([]);
-    const [bet, setBet] = useState(0);
-    const [balance, setBalance] = useState(1000); // Starting balance
-    const [gameMessage, setGameMessage] = useState('');
-    const [gameOver, setGameOver] = useState(false);
-    const [isFirstTurn, setIsFirstTurn] = useState(true);
-    const [numDecks, setNumDecks] = useState(gameConfig.numDecks);
-    const [unseenOthers, setUnseenOthers] = useState(0);
-    const [unseenTens, setUnseenTens] = useState(0);
-    const [splitHands, setSplitHands] = useState([]); // Store split hands
-    const [activeHandIndex, setActiveHandIndex] = useState(0); // Track which hand is active
-    const [showCardTally, setShowCardTally] = useState(true); // Toggle for card tally visibility
+    // Game state - core gameplay variables
+    const [gameState, setGameState] = useState({
+        playerHand: [],
+        dealerHand: [],
+        gameMessage: '',
+        gameOver: false,
+        isFirstTurn: true
+    });
+
+    // Betting state - money and wagers
+    const [bettingState, setBettingState] = useState({
+        bet: 0,
+        balance: 1000 // Starting balance
+    });
+
+    // Deck state - cards and tracking
+    const [deckState, setDeckState] = useState({
+        deck: createDeck(),
+        numDecks: gameConfig.numDecks,
+        unseenOthers: 0,
+        unseenTens: 0
+    });
+
+    // Split state - handling multiple hands
+    const [splitState, setSplitState] = useState({
+        splitHands: [],
+        activeHandIndex: 0
+    });
+
+    // UI state - display preferences
+    const [uiState, setUiState] = useState({
+        showCardTally: true
+    });
+
+    // Destructure for easier access
+    const { playerHand, dealerHand, gameMessage, gameOver, isFirstTurn } = gameState;
+    const { bet, balance } = bettingState;
+    const { deck, numDecks, unseenOthers, unseenTens } = deckState;
+    const { splitHands, activeHandIndex } = splitState;
+    const { showCardTally } = uiState;
 
     useEffect(() => {
         const totalCards = numDecks * 52;
         const totalTens = numDecks * 16; // 4 suits * 4 cards (10, J, Q, K) per deck
-        setUnseenOthers(totalCards - totalTens);
-        setUnseenTens(totalTens);
+        setDeckState(prev => ({
+            ...prev,
+            unseenOthers: totalCards - totalTens,
+            unseenTens: totalTens
+        }));
     }, [numDecks]);
 
     const reshuffleDeckIfNeeded = () => {
@@ -31,30 +60,45 @@ const GameTable = () => {
         const usedCards = totalCards - (unseenOthers + unseenTens);
 
         if (usedCards >= totalCards / 2) {
-            setDeck(createDeck());
-            setUnseenOthers(numDecks * 36); // Reset unseen others (52 - 16 tens per deck)
-            setUnseenTens(numDecks * 16); // Reset unseen tens
-            setGameMessage("Deck reshuffled!");
+            setDeckState(prev => ({
+                ...prev,
+                deck: createDeck(),
+                unseenOthers: numDecks * 36, // Reset unseen others (52 - 16 tens per deck)
+                unseenTens: numDecks * 16 // Reset unseen tens
+            }));
+            setGameState(prev => ({
+                ...prev,
+                gameMessage: "Deck reshuffled!"
+            }));
         }
     };
 
     const updateDecks = (newNumDecks) => {
-        setNumDecks(newNumDecks);
+        setDeckState(prev => ({
+            ...prev,
+            numDecks: newNumDecks,
+            deck: createDeck()
+        }));
         gameConfig.numDecks = newNumDecks; // Update the game configuration
-        setDeck(createDeck());
         resetGame();
     };
 
     const resetGame = () => {
-        setPlayerHand([]);
-        setDealerHand([]);
-        setBet(0);
-        setBalance(1000);
-        setGameMessage('');
-        setGameOver(false);
-        setIsFirstTurn(true);
-        setSplitHands([]);
-        setActiveHandIndex(0);
+        setGameState({
+            playerHand: [],
+            dealerHand: [],
+            gameMessage: '',
+            gameOver: false,
+            isFirstTurn: true
+        });
+        setBettingState({
+            bet: 0,
+            balance: 1000
+        });
+        setSplitState({
+            splitHands: [],
+            activeHandIndex: 0
+        });
     };
 
     const updateUnseenCounts = (playedCards) => {
@@ -69,8 +113,11 @@ const GameTable = () => {
             }
         });
 
-        setUnseenOthers((prev) => prev - othersCount);
-        setUnseenTens((prev) => prev - tensCount);
+        setDeckState(prev => ({
+            ...prev,
+            unseenOthers: prev.unseenOthers - othersCount,
+            unseenTens: prev.unseenTens - tensCount
+        }));
     };
 
     const dealInitialCards = () => {
@@ -81,20 +128,29 @@ const GameTable = () => {
         const dealerCards = [newDeck.pop(), newDeck.pop()];
         updateUnseenCounts([...playerCards, ...dealerCards]);
         
-        setPlayerHand(playerCards);
-        setDealerHand(dealerCards);
-        setDeck(newDeck);
-        setGameOver(false);
-        setGameMessage('');
-        setIsFirstTurn(true);
-        setSplitHands([]);
-        setActiveHandIndex(0);
+        setGameState({
+            playerHand: playerCards,
+            dealerHand: dealerCards,
+            gameMessage: '',
+            gameOver: false,
+            isFirstTurn: true
+        });
+        setDeckState(prev => ({
+            ...prev,
+            deck: newDeck
+        }));
+        setSplitState({
+            splitHands: [],
+            activeHandIndex: 0
+        });
     };
 
     const handleBet = (amount) => {
         if (amount >= gameConfig.minBet && amount <= gameConfig.maxBet && amount <= balance) {
-            setBet(amount);
-            setBalance(balance - amount);
+            setBettingState(prev => ({
+                bet: amount,
+                balance: prev.balance - amount
+            }));
             dealInitialCards();
         }
     };
@@ -105,30 +161,50 @@ const GameTable = () => {
         const newCard = newDeck.pop();
         const newPlayerHand = [...playerHand, newCard];
         updateUnseenCounts([newCard]);
-        setPlayerHand(newPlayerHand);
-        setDeck(newDeck);
+        
+        setGameState(prev => ({
+            ...prev,
+            playerHand: newPlayerHand,
+            isFirstTurn: false
+        }));
+        setDeckState(prev => ({
+            ...prev,
+            deck: newDeck
+        }));
 
         // Check if the player busts
         if (calculateHandValue(newPlayerHand) > 21) {
-            setGameMessage("You busted! You lose!");
-            setGameOver(true);
+            setGameState(prev => ({
+                ...prev,
+                gameMessage: "You busted! You lose!",
+                gameOver: true
+            }));
         }
-
-        setIsFirstTurn(false);
     };
 
     const playNextHand = () => {
         if (activeHandIndex < splitHands.length - 1) {
-            setActiveHandIndex(activeHandIndex + 1);
-            setPlayerHand(splitHands[activeHandIndex + 1]);
-            setGameMessage('');
-            setGameOver(false);
-            setIsFirstTurn(true);
+            setSplitState(prev => ({
+                ...prev,
+                activeHandIndex: prev.activeHandIndex + 1
+            }));
+            setGameState(prev => ({
+                ...prev,
+                playerHand: splitHands[activeHandIndex + 1],
+                gameMessage: '',
+                gameOver: false,
+                isFirstTurn: true
+            }));
         } else {
             // All hands have been played, end the turn
-            setPlayerHand([]);
-            setSplitHands([]);
-            setActiveHandIndex(0);
+            setGameState(prev => ({
+                ...prev,
+                playerHand: []
+            }));
+            setSplitState({
+                splitHands: [],
+                activeHandIndex: 0
+            });
         }
     };
 
@@ -143,24 +219,41 @@ const GameTable = () => {
             updateUnseenCounts([newCard]);
         }
 
-        setDealerHand(newDealerHand);
-        setDeck(newDeck);
+        setGameState(prev => ({
+            ...prev,
+            dealerHand: newDealerHand,
+            isFirstTurn: false
+        }));
+        setDeckState(prev => ({
+            ...prev,
+            deck: newDeck
+        }));
 
         const playerValue = calculateHandValue(playerHand);
         const dealerValue = calculateHandValue(newDealerHand);
 
+        let newMessage = '';
+        let newBalance = balance;
+
         if (playerValue > 21 || (dealerValue <= 21 && dealerValue > playerValue)) {
-            setGameMessage("You lose!");
+            newMessage = "You lose!";
         } else if (dealerValue > 21 || playerValue > dealerValue) {
-            setGameMessage("You win!");
-            setBalance(balance + (bet * 1.5)); // Player wins, 3:2 payout
+            newMessage = "You win!";
+            newBalance = balance + (bet * 1.5); // Player wins, 3:2 payout
         } else {
-            setGameMessage("Push!"); // Tie scenario
-            setBalance(balance + bet); // Return the original bet to the player
+            newMessage = "Push!"; // Tie scenario
+            newBalance = balance + bet; // Return the original bet to the player
         }
 
-        setGameOver(true);
-        setIsFirstTurn(false);
+        setGameState(prev => ({
+            ...prev,
+            gameMessage: newMessage,
+            gameOver: true
+        }));
+        setBettingState(prev => ({
+            ...prev,
+            balance: newBalance
+        }));
 
         if (splitHands.length > 0) {
             playNextHand(); // Move to the next hand if split
@@ -170,20 +263,33 @@ const GameTable = () => {
     const playerDoubleDown = () => {
         reshuffleDeckIfNeeded();
         if (balance >= bet) {
-            setBalance(balance - bet);
-            setBet(bet * 2);
+            setBettingState(prev => ({
+                ...prev,
+                balance: prev.balance - bet,
+                bet: prev.bet * 2
+            }));
 
             const newDeck = [...deck];
             const newCard = newDeck.pop();
             const newPlayerHand = [...playerHand, newCard];
             updateUnseenCounts([newCard]);
-            setPlayerHand(newPlayerHand);
-            setDeck(newDeck);
+            
+            setGameState(prev => ({
+                ...prev,
+                playerHand: newPlayerHand
+            }));
+            setDeckState(prev => ({
+                ...prev,
+                deck: newDeck
+            }));
 
             // Check if the player busts after doubling down
             if (calculateHandValue(newPlayerHand) > 21) {
-                setGameMessage("You busted! You lose!");
-                setGameOver(true);
+                setGameState(prev => ({
+                    ...prev,
+                    gameMessage: "You busted! You lose!",
+                    gameOver: true
+                }));
                 return;
             }
 
@@ -207,11 +313,22 @@ const GameTable = () => {
             const firstHand = [playerHand[0], newDeck.pop()];
             const secondHand = [playerHand[1], newDeck.pop()];
 
-            setSplitHands([firstHand, secondHand]);
-            setPlayerHand(firstHand);
-            setDeck(newDeck);
-            setBalance(balance - bet); // Deduct the bet for the second hand
-            setActiveHandIndex(0); // Start playing the first hand
+            setSplitState({
+                splitHands: [firstHand, secondHand],
+                activeHandIndex: 0
+            });
+            setGameState(prev => ({
+                ...prev,
+                playerHand: firstHand
+            }));
+            setDeckState(prev => ({
+                ...prev,
+                deck: newDeck
+            }));
+            setBettingState(prev => ({
+                ...prev,
+                balance: prev.balance - bet
+            }));
         }
     };
 
@@ -221,8 +338,6 @@ const GameTable = () => {
         }
         return dealerHand.map((card) => `${card.value} of ${card.suit}`).join(', ');
     };
-
-
 
     const payoutsMapping = {
         1.5: "3:2"
@@ -237,13 +352,8 @@ const GameTable = () => {
                 <p><strong>Balance:</strong> ${balance}</p>
                 <p><strong>Current Bet:</strong> ${bet}</p>
                 <p><strong>Payout:</strong> {payoutsMapping[gameConfig.blackjackPayout]}</p>
-                <button id="reset" onClick={() => setBalance(1000)}>Reset Balance to $1K</button>
-            </div>
-            
-            {/* Game Controls */}
-            <div className="game-controls">
                 <label>
-                    Number of Decks:
+                    <strong>Number of Decks:</strong>
                     <select
                         value={numDecks}
                         onChange={(e) => updateDecks(parseInt(e.target.value, 10))}
@@ -256,6 +366,7 @@ const GameTable = () => {
                         ))}
                     </select>
                 </label>
+                <button id="reset" onClick={() => setBettingState(prev => ({ ...prev, balance: 1000 }))}>Reset Balance to $1K</button>
             </div>
             
             {/* Game Controls */}
@@ -265,10 +376,15 @@ const GameTable = () => {
                     <button onClick={() => handleBet(50)} disabled={gameOver}>Bet $50</button>
                     <button onClick={() => handleBet(100)} disabled={gameOver}>Bet $100</button>
                     {gameOver && <button onClick={() => {
-                        setPlayerHand([]);
-                        setDealerHand([]);
-                        setSplitHands([]);
-                        setActiveHandIndex(0);
+                        setGameState(prev => ({
+                            ...prev,
+                            playerHand: [],
+                            dealerHand: []
+                        }));
+                        setSplitState({
+                            splitHands: [],
+                            activeHandIndex: 0
+                        });
                         setTimeout(() => dealInitialCards(), 0);
                     }}>Play Again</button>}
                 </div>
@@ -324,7 +440,7 @@ const GameTable = () => {
                 <div className="card-tally">
                     <h3>Card Tally</h3>
                     <button
-                        onClick={() => setShowCardTally(!showCardTally)}
+                        onClick={() => setUiState(prev => ({ ...prev, showCardTally: !prev.showCardTally }))}
                         className="toggle-tally-btn"
                     >
                         {showCardTally ? 'Hide Numbers' : 'Show Numbers'}
