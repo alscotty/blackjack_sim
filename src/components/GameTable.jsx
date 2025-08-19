@@ -56,10 +56,7 @@ const GameTable = () => {
     }, [numDecks]);
 
     const reshuffleDeckIfNeeded = () => {
-        const totalCards = numDecks * 52;
-        const usedCards = totalCards - (unseenOthers + unseenTens);
-
-        if (usedCards >= totalCards / 2) {
+        if (deck.length < 10) {
             setDeckState(prev => ({
                 ...prev,
                 deck: createDeck(),
@@ -157,7 +154,7 @@ const GameTable = () => {
 
     const playerHit = () => {
         reshuffleDeckIfNeeded();
-        const newDeck = [...deck];
+                    const newDeck = [...deck];
         const newCard = newDeck.pop();
         const newPlayerHand = [...playerHand, newCard];
         updateUnseenCounts([newCard]);
@@ -376,6 +373,8 @@ const GameTable = () => {
                     <button onClick={() => handleBet(50)} disabled={gameOver}>Bet $50</button>
                     <button onClick={() => handleBet(100)} disabled={gameOver}>Bet $100</button>
                     {gameOver && <button onClick={() => {
+                        // Keep the same bet amount for the next game
+                        const currentBet = bet;
                         setGameState(prev => ({
                             ...prev,
                             playerHand: [],
@@ -385,7 +384,14 @@ const GameTable = () => {
                             splitHands: [],
                             activeHandIndex: 0
                         });
-                        setTimeout(() => dealInitialCards(), 0);
+                        // Automatically place the same bet and deal cards
+                        setTimeout(() => {
+                            setBettingState(prev => ({
+                                bet: currentBet,
+                                balance: prev.balance - currentBet
+                            }));
+                            dealInitialCards();
+                        }, 0);
                     }}>Play Again</button>}
                 </div>
                 
