@@ -38,6 +38,9 @@ const GameTable = () => {
         showCardTally: true
     });
 
+    // Payout state - user-selected payout multiplier
+    const [selectedPayout, setSelectedPayout] = useState(gameConfig.blackjackPayout);
+
     // Destructure for easier access
     const { playerHand, dealerHand, gameMessage, gameOver, isFirstTurn } = gameState;
     const { bet, balance } = bettingState;
@@ -236,7 +239,7 @@ const GameTable = () => {
             newMessage = "You lose!";
         } else if (dealerValue > 21 || playerValue > dealerValue) {
             newMessage = "You win!";
-            newBalance = balance + (bet * 1.5); // Player wins, 3:2 payout
+            newBalance = balance + (bet * selectedPayout); // Player wins, payout based on selected multiplier
         } else {
             newMessage = "Push!"; // Tie scenario
             newBalance = balance + bet; // Return the original bet to the player
@@ -337,6 +340,7 @@ const GameTable = () => {
     };
 
     const payoutsMapping = {
+        1.2:"6:5 (most common)",
         1.5: "3:2"
     }
 
@@ -348,7 +352,21 @@ const GameTable = () => {
             <div className="game-stats">
                 <p><strong>Balance:</strong> ${balance}</p>
                 <p><strong>Current Bet:</strong> ${bet}</p>
-                <p><strong>Payout:</strong> {payoutsMapping[gameConfig.blackjackPayout]}</p>
+                <p><strong>Payout:</strong> {payoutsMapping[selectedPayout]}</p>
+                <label>
+                    <strong>Blackjack Payout:</strong>
+                    <select
+                        value={selectedPayout}
+                        onChange={(e) => setSelectedPayout(parseFloat(e.target.value))}
+                        disabled={playerHand.length > 0 || dealerHand.length > 0}
+                    >
+                        {Object.keys(payoutsMapping).map((multiplier) => (
+                            <option key={multiplier} value={multiplier}>
+                                {payoutsMapping[multiplier]}
+                            </option>
+                        ))}
+                    </select>
+                </label>
                 <label>
                     <strong>Number of Decks:</strong>
                     <select
