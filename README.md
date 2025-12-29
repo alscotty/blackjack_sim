@@ -14,7 +14,7 @@ Play on live site [here](https://alscotty.github.io/blackjack_sim/)
 - add serenade shortcuts/scripts []
 - displays running count, # unseen "others" vs # unseen 10's for Ten Count Strategy [x]
 - get card images somewhere to use [x]
-- option to toggle payout ratio, or just set to whatever is most common in Vegas tables []
+- option to toggle payout ratio, or just set to whatever is most common in Vegas tables [x]
 - add test cases []
 - refactor/clean up []
 
