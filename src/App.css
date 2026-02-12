@@ -8,7 +8,12 @@
 body {
   margin: 0;
   padding: 0;
-  background: linear-gradient(135deg, #1a472a 0%, #2d5a3d 50%, #1a472a 100%);
+  /* Soft blackjack table-style felt background */
+  background:
+    radial-gradient(circle at 20% 0%, rgba(255, 255, 255, 0.06) 0, transparent 45%),
+    radial-gradient(circle at 80% 0%, rgba(255, 255, 255, 0.05) 0, transparent 50%),
+    radial-gradient(circle at 50% 120%, rgba(0, 0, 0, 0.4) 0, transparent 60%),
+    radial-gradient(circle at 50% 40%, #2f6f3d 0, #1f5b30 45%, #1a472a 100%);
   color: #ffffff;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 16px;
@@ -26,13 +31,12 @@ body {
 
 /* Header and Game Info */
 .game-table {
-  background: rgba(0, 0, 0, 0.3);
+  background: transparent; /* let the felt background show through */
   border-radius: 20px;
   padding: 20px;
   margin-bottom: 15px;
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
 }
 
 .game-table h3 {
@@ -359,6 +363,7 @@ body {
   height: fit-content;
   position: sticky;
   top: 20px;
+  overflow: hidden;
 }
 
 .card-tally h3 {
@@ -394,6 +399,66 @@ body {
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(156, 39, 176, 0.4);
   background: linear-gradient(135deg, #7B1FA2, #9C27B0);
+}
+
+.card-tally-content {
+  overflow: visible;
+}
+
+/* Card Tally - advantage reference table */
+.others-tens-advantage-table {
+  width: 100%;
+  margin-top: 12px;
+  border-collapse: separate;
+  border-spacing: 0;
+  table-layout: fixed;
+  overflow: hidden;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.others-tens-advantage-table th,
+.others-tens-advantage-table td {
+  padding: 8px 10px;
+  font-size: 0.82rem;
+  line-height: 1.2;
+  color: #e8e8e8;
+}
+
+.others-tens-advantage-table th {
+  text-align: left;
+  font-weight: 600;
+  color: #ffd700;
+  background: rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.others-tens-advantage-table td {
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.others-tens-advantage-table tr:first-child td {
+  border-top: none;
+}
+
+.others-tens-advantage-table tbody tr:nth-child(even) td {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.others-tens-advantage-table td:first-child {
+  width: 34%;
+  font-variant-numeric: tabular-nums;
+}
+
+.others-tens-advantage-table td:last-child {
+  width: 66%;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.others-tens-advantage-table th:last-child {
+  text-align: right;
 }
 
 /* Responsive Design */

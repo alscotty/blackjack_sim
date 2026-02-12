@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import gameConfig from '../config/gameConfig';
 import { createDeck, calculateHandValue } from '../game/blackjackLogic';
 import CardSpriteRendering from './cardSpriteRendering.jsx';
+import CardTally from './CardTally.jsx';
 
 const GameTable = () => {
     // Game state - core gameplay variables
@@ -33,11 +34,6 @@ const GameTable = () => {
         activeHandIndex: 0
     });
 
-    // UI state - display preferences
-    const [uiState, setUiState] = useState({
-        showCardTally: true
-    });
-
     // Payout state - user-selected payout multiplier
     const [selectedPayout, setSelectedPayout] = useState(gameConfig.blackjackPayout);
 
@@ -46,7 +42,6 @@ const GameTable = () => {
     const { bet, balance } = bettingState;
     const { deck, numDecks, unseenOthers, unseenTens } = deckState;
     const { splitHands, activeHandIndex } = splitState;
-    const { showCardTally } = uiState;
 
     useEffect(() => {
         const totalCards = numDecks * 52;
@@ -461,22 +456,7 @@ const GameTable = () => {
                         <p>Value: {gameOver ? calculateHandValue(dealerHand) : renderDealerHand(dealerHand)}</p>
                     </div>
                 </div>
-                <div className="card-tally">
-                    <h3>Card Tally</h3>
-                    <button
-                        onClick={() => setUiState(prev => ({ ...prev, showCardTally: !prev.showCardTally }))}
-                        className="toggle-tally-btn"
-                    >
-                        {showCardTally ? 'Hide Numbers' : 'Show Numbers'}
-                    </button>
-                    {showCardTally && (
-                        <>
-                            <p>Unseen Others: {unseenOthers}</p>
-                            <p>Unseen Tens: {unseenTens}</p>
-                            <p>Ratio (Others to Tens): {(unseenOthers / unseenTens).toFixed(2)}</p>
-                        </>
-                    )}
-                </div>
+                <CardTally unseenOthers={unseenOthers} unseenTens={unseenTens} />
             </div>
         </div>
     );

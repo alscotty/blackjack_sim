@@ -69,4 +69,3 @@ Run tests in watch mode (for development):
 ```bash
 npm test
 ```
-
