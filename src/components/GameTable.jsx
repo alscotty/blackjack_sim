@@ -271,7 +271,8 @@ const GameTable = () => {
             
             setGameState(prev => ({
                 ...prev,
-                playerHand: newPlayerHand
+                playerHand: newPlayerHand,
+                isFirstTurn: false
             }));
             setDeckState(prev => ({
                 ...prev,
@@ -285,11 +286,7 @@ const GameTable = () => {
                     gameMessage: "You busted! You lose!",
                     gameOver: true
                 }));
-                return;
             }
-
-            // End the game after doubling down
-            playerStand(true);
         }
     };
 
@@ -431,8 +428,8 @@ const GameTable = () => {
                     <div className="player-hand">
                         <h2>Player Hand {splitHands.length > 0 ? `(Hand ${activeHandIndex + 1})` : ''}</h2>
                         <div className="cards-display">
-                            {playerHand.map((card) => (
-                                <CardSpriteRendering key={`${card.value}-${card.suit}`} card={card} />
+                            {playerHand.map((card, index) => (
+                                <CardSpriteRendering key={`${card.value}-${card.suit}-${index}`} card={card} />
                             ))}
                         </div>
                         <p>Value: {calculateHandValue(playerHand)}</p>
@@ -443,13 +440,13 @@ const GameTable = () => {
                             {!gameOver ? (
                                 <>
                                     <CardSpriteRendering card={{ value: 'back', suit: 'back' }} isHidden={true} />
-                                    {dealerHand.slice(1).map((card) => (
-                                        <CardSpriteRendering key={`${card.value}-${card.suit}`} card={card} />
+                                    {dealerHand.slice(1).map((card, index) => (
+                                        <CardSpriteRendering key={`${card.value}-${card.suit}-${index}`} card={card} />
                                     ))}
                                 </>
                             ) : (
-                                dealerHand.map((card) => (
-                                    <CardSpriteRendering key={`${card.value}-${card.suit}`} card={card} />
+                                dealerHand.map((card, index) => (
+                                    <CardSpriteRendering key={`${card.value}-${card.suit}-${index}`} card={card} />
                                 ))
                             )}
                         </div>
