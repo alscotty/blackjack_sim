@@ -17,7 +17,8 @@ const GameTable = () => {
     // Betting state - money and wagers
     const [bettingState, setBettingState] = useState({
         bet: 0,
-        balance: 1000 // Starting balance
+        balance: 1000, // Starting balance
+        lastBalanceChange: null // +win amount, -loss amount, 0 push (shown at game end)
     });
 
     // Deck state - cards and tracking
@@ -39,7 +40,7 @@ const GameTable = () => {
 
     // Destructure for easier access
     const { playerHand, dealerHand, gameMessage, gameOver, isFirstTurn } = gameState;
-    const { bet, balance } = bettingState;
+    const { bet, balance, lastBalanceChange } = bettingState;
     const { deck, numDecks, unseenOthers, unseenTens } = deckState;
     const { splitHands, activeHandIndex } = splitState;
 
@@ -88,7 +89,8 @@ const GameTable = () => {
         });
         setBettingState({
             bet: 0,
-            balance: 1000
+            balance: 1000,
+            lastBalanceChange: null
         });
         setSplitState({
             splitHands: [],
@@ -144,7 +146,8 @@ const GameTable = () => {
         if (amount >= gameConfig.minBet && amount <= gameConfig.maxBet && amount <= balance) {
             setBettingState(prev => ({
                 bet: amount,
-                balance: prev.balance - amount
+                balance: prev.balance - amount,
+                lastBalanceChange: null
             }));
             dealInitialCards();
         }
@@ -174,6 +177,7 @@ const GameTable = () => {
                 gameMessage: "You busted! You lose!",
                 gameOver: true
             }));
+            setBettingState(prev => ({ ...prev, lastBalanceChange: -bet }));
         }
     };
 
@@ -229,15 +233,19 @@ const GameTable = () => {
 
         let newMessage = '';
         let newBalance = balance;
+        let balanceChange = 0;
 
         if (playerValue > 21 || (dealerValue <= 21 && dealerValue > playerValue)) {
             newMessage = "You lose!";
+            balanceChange = -bet;
         } else if (dealerValue > 21 || playerValue > dealerValue) {
             newMessage = "You win!";
             newBalance = balance + (bet * selectedPayout); // Player wins, payout based on selected multiplier
+            balanceChange = bet * selectedPayout;
         } else {
             newMessage = "Push!"; // Tie scenario
             newBalance = balance + bet; // Return the original bet to the player
+            balanceChange = 0;
         }
 
         setGameState(prev => ({
@@ -247,7 +255,8 @@ const GameTable = () => {
         }));
         setBettingState(prev => ({
             ...prev,
-            balance: newBalance
+            balance: newBalance,
+            lastBalanceChange: balanceChange
         }));
 
         if (splitHands.length > 0) {
@@ -258,10 +267,13 @@ const GameTable = () => {
     const playerDoubleDown = () => {
         reshuffleDeckIfNeeded();
         if (balance >= bet) {
+            const originalBet = bet;
+            const doubledBet = bet * 2;
+
             setBettingState(prev => ({
                 ...prev,
-                balance: prev.balance - bet,
-                bet: prev.bet * 2
+                balance: prev.balance - originalBet,
+                bet: doubledBet
             }));
 
             const newDeck = [...deck];
@@ -286,7 +298,49 @@ const GameTable = () => {
                     gameMessage: "You busted! You lose!",
                     gameOver: true
                 }));
+                setBettingState(prev => ({ ...prev, bet: originalBet, lastBalanceChange: -doubledBet }));
+                return;
             }
+
+            // Auto-stand: run dealer and resolve
+            let deckAfterDealer = [...newDeck];
+            let newDealerHand = [...dealerHand];
+            while (calculateHandValue(newDealerHand) < 17) {
+                const dealerCard = deckAfterDealer.pop();
+                newDealerHand.push(dealerCard);
+                updateUnseenCounts([dealerCard]);
+            }
+
+            const playerValue = calculateHandValue(newPlayerHand);
+            const dealerValue = calculateHandValue(newDealerHand);
+            const balanceAfterDouble = balance - originalBet;
+
+            let newMessage = '';
+            let newBalance = balanceAfterDouble;
+            let balanceChange = 0;
+
+            if (dealerValue <= 21 && dealerValue > playerValue) {
+                newMessage = "You lose!";
+                balanceChange = -doubledBet;
+            } else if (dealerValue > 21 || playerValue > dealerValue) {
+                newMessage = "You win!";
+                newBalance = balanceAfterDouble + (doubledBet * selectedPayout);
+                balanceChange = doubledBet * selectedPayout;
+            } else {
+                newMessage = "Push!";
+                newBalance = balanceAfterDouble + doubledBet;
+                balanceChange = 0;
+            }
+
+            setGameState(prev => ({
+                ...prev,
+                playerHand: newPlayerHand,
+                dealerHand: newDealerHand,
+                gameMessage: newMessage,
+                gameOver: true
+            }));
+            setDeckState(prev => ({ ...prev, deck: deckAfterDealer }));
+            setBettingState(prev => ({ ...prev, balance: newBalance, bet: originalBet, lastBalanceChange: balanceChange }));
         }
     };
 
@@ -342,7 +396,17 @@ const GameTable = () => {
             
             {/* Game Stats */}
             <div className="game-stats">
-                <p><strong>Balance:</strong> ${balance}</p>
+                <p className="balance-row">
+                    <strong>Balance:</strong> ${balance}
+                    {gameOver && lastBalanceChange !== null && lastBalanceChange !== 0 && (
+                        <span className={`balance-change ${lastBalanceChange > 0 ? 'balance-change-win' : 'balance-change-lose'}`}>
+                            {lastBalanceChange > 0 ? '+' : ''}${lastBalanceChange}
+                        </span>
+                    )}
+                    {gameOver && lastBalanceChange === 0 && (
+                        <span className="balance-change balance-change-push">$0</span>
+                    )}
+                </p>
                 <p><strong>Current Bet:</strong> ${bet}</p>
                 <p><strong>Payout:</strong> {payoutsMapping[selectedPayout]}</p>
                 <label>
@@ -382,7 +446,12 @@ const GameTable = () => {
                     <button onClick={() => handleBet(10)} disabled={gameOver}>Bet $10</button>
                     <button onClick={() => handleBet(50)} disabled={gameOver}>Bet $50</button>
                     <button onClick={() => handleBet(100)} disabled={gameOver}>Bet $100</button>
-                    {gameOver && <button onClick={() => {
+                </div>
+                
+                <div className='player-actions'>
+                    <button onClick={playerHit} disabled={playerHand.length === 0 || gameOver}>Hit</button>
+                    <button onClick={playerStand} disabled={playerHand.length === 0 || gameOver}>Stand</button>
+                    {gameOver && <button className="play-again-btn" onClick={() => {
                         // Keep the same bet amount for the next game
                         const currentBet = bet;
                         setGameState(prev => ({
@@ -398,16 +467,12 @@ const GameTable = () => {
                         setTimeout(() => {
                             setBettingState(prev => ({
                                 bet: currentBet,
-                                balance: prev.balance - currentBet
+                                balance: prev.balance - currentBet,
+                                lastBalanceChange: null
                             }));
                             dealInitialCards();
                         }, 0);
                     }}>Play Again</button>}
-                </div>
-                
-                <div className='player-actions'>
-                    <button onClick={playerHit} disabled={playerHand.length === 0 || gameOver}>Hit</button>
-                    <button onClick={playerStand} disabled={playerHand.length === 0 || gameOver}>Stand</button>
                     <button
                         onClick={playerDoubleDown}
                         disabled={!isFirstTurn || gameOver || balance < bet || playerHand.length === 0}

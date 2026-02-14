@@ -168,7 +168,7 @@ describe('GameTable', () => {
       });
     });
 
-    test('should double the bet when doubling down', async () => {
+    test('should double down, auto-stand, resolve, then reset bet to original', async () => {
       render(<GameTable />);
       fireEvent.click(screen.getByText('Bet $10'));
       
@@ -176,10 +176,15 @@ describe('GameTable', () => {
       fireEvent.click(doubleDownButton);
       
       await waitFor(() => {
-        // Bet should be doubled
-        expect(screen.getByText(/\$20/)).toBeInTheDocument();
-        // Balance should be reduced by additional bet
-        expect(screen.getByText(/\$980/)).toBeInTheDocument();
+        // Round resolves (dealer plays, win/lose/push)
+        const gameMessage = screen.queryByText(/You win!/i) ||
+          screen.queryByText(/You lose!/i) ||
+          screen.queryByText(/Push!/i) ||
+          screen.queryByText(/You busted/i);
+        expect(gameMessage).toBeInTheDocument();
+        // Bet resets to original amount for next hand
+        const currentBetEl = screen.getByText(/Current Bet:/i).parentElement;
+        expect(currentBetEl).toHaveTextContent('$10');
       });
     });
   });
