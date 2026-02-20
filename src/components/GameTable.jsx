@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import gameConfig from '../config/gameConfig';
 import { createDeck, calculateHandValue } from '../game/blackjackLogic';
 import CardSpriteRendering from './cardSpriteRendering.jsx';
@@ -38,6 +38,9 @@ const GameTable = () => {
     // Payout state - user-selected payout multiplier
     const [selectedPayout, setSelectedPayout] = useState(gameConfig.blackjackPayout);
 
+    // Auto-stand at 21: only trigger once per hand
+    const hasAutoStoodForThisHand = useRef(false);
+
     // Destructure for easier access
     const { playerHand, dealerHand, gameMessage, gameOver, isFirstTurn } = gameState;
     const { bet, balance, lastBalanceChange } = bettingState;
@@ -53,6 +56,19 @@ const GameTable = () => {
             unseenTens: totalTens
         }));
     }, [numDecks]);
+
+    // Auto-stand when hand value is exactly 21 (after deal or after hit)
+    useEffect(() => {
+        if (
+            !gameOver &&
+            playerHand.length >= 2 &&
+            calculateHandValue(playerHand) === 21 &&
+            !hasAutoStoodForThisHand.current
+        ) {
+            hasAutoStoodForThisHand.current = true;
+            playerStand();
+        }
+    }, [gameOver, playerHand]);
 
     const reshuffleDeckIfNeeded = () => {
         if (deck.length < 10) {
@@ -118,6 +134,7 @@ const GameTable = () => {
     };
 
     const dealInitialCards = () => {
+        hasAutoStoodForThisHand.current = false;
         reshuffleDeckIfNeeded();
         
         const newDeck = [...deck];
@@ -183,6 +200,7 @@ const GameTable = () => {
 
     const playNextHand = () => {
         if (activeHandIndex < splitHands.length - 1) {
+            hasAutoStoodForThisHand.current = false;
             setSplitState(prev => ({
                 ...prev,
                 activeHandIndex: prev.activeHandIndex + 1
@@ -392,8 +410,6 @@ const GameTable = () => {
 
     return (
         <div className="game-table">
-            <h3>Blackjack</h3>
-            
             {/* Game Stats */}
             <div className="game-stats">
                 <p className="balance-row">
@@ -438,6 +454,7 @@ const GameTable = () => {
                     </select>
                 </label>
                 <button id="reset" onClick={() => setBettingState(prev => ({ ...prev, balance: 1000 }))}>Reset Balance to $1K</button>
+                <h3><em>Blackjack</em></h3>
             </div>
             
             {/* Game Controls */}
@@ -491,16 +508,18 @@ const GameTable = () => {
             <div className="game-layout">
                 <div className="hand-container">
                     <div className="player-hand">
-                        <h2>Player Hand {splitHands.length > 0 ? `(Hand ${activeHandIndex + 1})` : ''}</h2>
+                        <h2>Player Hand {splitHands.length > 0 ? `(Hand ${activeHandIndex + 1})` : ''} <span className="hand-value">{`[${calculateHandValue(playerHand)}]`}</span></h2>
                         <div className="cards-display">
                             {playerHand.map((card, index) => (
                                 <CardSpriteRendering key={`${card.value}-${card.suit}-${index}`} card={card} />
                             ))}
                         </div>
-                        <p>Value: {calculateHandValue(playerHand)}</p>
                     </div>
                     <div className="dealer-hand">
-                        <h2>Dealer Hand</h2>
+                        <h2>Dealer Hand 
+                            <span className="hand-value">
+                            {gameOver && `[${calculateHandValue(dealerHand)}]`}
+                            </span></h2>
                         <div className="cards-display">
                             {!gameOver ? (
                                 <>
@@ -515,7 +534,6 @@ const GameTable = () => {
                                 ))
                             )}
                         </div>
-                        <p>Value: {gameOver ? calculateHandValue(dealerHand) : renderDealerHand(dealerHand)}</p>
                     </div>
                 </div>
                 <CardTally unseenOthers={unseenOthers} unseenTens={unseenTens} />

@@ -328,6 +328,12 @@ body {
   letter-spacing: 1px;
 }
 
+.hand-value {
+  margin-left: 0.5em;
+  font-weight: 600;
+  color: #e0e0e0;
+}
+
 .cards-display {
   display: flex;
   justify-content: center;
