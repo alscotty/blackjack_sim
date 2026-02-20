@@ -40,6 +40,7 @@ const GameTable = () => {
 
     // Auto-stand at 21: only trigger once per hand
     const hasAutoStoodForThisHand = useRef(false);
+    const playerStandRef = useRef(null);
 
     // Destructure for easier access
     const { playerHand, dealerHand, gameMessage, gameOver, isFirstTurn } = gameState;
@@ -66,7 +67,7 @@ const GameTable = () => {
             !hasAutoStoodForThisHand.current
         ) {
             hasAutoStoodForThisHand.current = true;
-            playerStand();
+            playerStandRef.current?.();
         }
     }, [gameOver, playerHand]);
 
@@ -281,6 +282,7 @@ const GameTable = () => {
             playNextHand(); // Move to the next hand if split
         }
     };
+    playerStandRef.current = playerStand;
 
     const playerDoubleDown = () => {
         reshuffleDeckIfNeeded();
@@ -394,13 +396,6 @@ const GameTable = () => {
                 balance: prev.balance - bet
             }));
         }
-    };
-
-    const renderDealerHand = () => {
-        if (!gameOver) {
-            return `Hidden, ${dealerHand.slice(1).map((card) => `${card.value} of ${card.suit}`).join(', ')}`;
-        }
-        return dealerHand.map((card) => `${card.value} of ${card.suit}`).join(', ');
     };
 
     const payoutsMapping = {
