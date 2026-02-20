@@ -1,7 +1,29 @@
 import React, { useMemo, useState } from 'react';
 
+const STORAGE_KEY = 'showCheatCodes';
+
+function getStoredShowCheatCodes() {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored === null) return true;
+    return stored === 'true';
+  } catch {
+    return true;
+  }
+}
+
 export default function CardTally({ unseenOthers, unseenTens }) {
-  const [showCardTally, setShowCardTally] = useState(true);
+  const [showCardTally, setShowCardTally] = useState(getStoredShowCheatCodes);
+
+  const toggleShow = () => {
+    setShowCardTally((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem(STORAGE_KEY, String(next));
+      } catch (_) {}
+      return next;
+    });
+  };
 
   const othersTensAdvantageTable = useMemo(
     () => [
@@ -27,7 +49,7 @@ export default function CardTally({ unseenOthers, unseenTens }) {
     <div className="card-tally">
       <h3>Card Tally</h3>
       <button
-        onClick={() => setShowCardTally((prev) => !prev)}
+        onClick={toggleShow}
         className="toggle-tally-btn"
       >
         {showCardTally ? 'Hide Numbers' : 'Show Numbers'}

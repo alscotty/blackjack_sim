@@ -400,7 +400,7 @@ const GameTable = () => {
                     <strong>Balance:</strong> ${balance}
                     {gameOver && lastBalanceChange !== null && lastBalanceChange !== 0 && (
                         <span className={`balance-change ${lastBalanceChange > 0 ? 'balance-change-win' : 'balance-change-lose'}`}>
-                            {lastBalanceChange > 0 ? '+' : ''}${lastBalanceChange}
+                            {lastBalanceChange > 0 ? `+$${lastBalanceChange}` : `-$${Math.abs(lastBalanceChange)}`}
                         </span>
                     )}
                     {gameOver && lastBalanceChange === 0 && (
