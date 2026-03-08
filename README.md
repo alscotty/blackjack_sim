@@ -16,6 +16,7 @@ Play on live site [here](https://alscotty.github.io/blackjack_sim/)
 - get card images somewhere to use [x]
 - option to toggle payout ratio, or just set to whatever is most common in Vegas tables [x]
 - add test cases [x]
+- toggle for showing image of cheatsheet when to stand/hit, basic strategy []
 - refactor/clean up []
 
 ## Available Scripts
